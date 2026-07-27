@@ -418,9 +418,7 @@ def project_request():
             print("=" * 60)
 
             raise
-        return render_template(
-        "request.html"
-    )
+    return render_template("request.html")
 
 # ==========================================
 # ADMIN DASHBOARD
@@ -1008,58 +1006,7 @@ def cancel_project(project_id):
 # CREATE FIRST ADMIN
 # ==========================================
 
-@app.route(
-    "/create-first-admin"
-)
-def create_first_admin():
 
-    existing_admin = User.query.filter_by(
-
-        is_admin=True
-
-    ).first()
-
-
-    if existing_admin:
-
-        return "An admin account already exists."
-
-
-    admin = User(
-
-        name="Tifemi Ogunleye",
-
-        email="ogunleyektifemi@gmail.com",
-
-        password_hash=generate_password_hash(
-
-            "TiffyOgun@1"
-
-        ),
-
-        is_admin=True
-
-    )
-
-
-    db.session.add(
-        admin
-    )
-
-    db.session.commit()
-
-
-    return """
-
-    <h1>Admin account created successfully!</h1>
-
-    <p>You can now log in at:</p>
-
-    <a href="/admin-login">
-        Admin Login
-    </a>
-
-    """
 
 
 
