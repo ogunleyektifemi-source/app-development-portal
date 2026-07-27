@@ -1,0 +1,141 @@
+<div class="request-card">
+
+    <div class="request-header">
+
+        <div>
+
+            <h2>{{ project.name }}</h2>
+
+            <p class="email">
+                {{ project.email }}
+            </p>
+
+        </div>
+
+        <span class="status">
+
+            {{ project.status }}
+
+        </span>
+
+    </div>
+
+
+    <div class="request-details">
+
+        <p>
+            <strong>Application Type:</strong>
+            {{ project.project_type }}
+        </p>
+
+        {% if project.budget %}
+
+        <p>
+
+            <strong>Budget:</strong>
+
+            {{ project.budget }}
+
+        </p>
+
+        {% endif %}
+
+        <p>
+
+            <strong>Project Description:</strong>
+
+        </p>
+
+        <p class="description">
+
+            {{ project.project_description }}
+
+        </p>
+
+    </div>
+
+
+    <div class="request-actions">
+
+    {% if project.status == "New" %}
+
+    <form
+        method="POST"
+        action="{{ url_for('accept_project', project_id=project.id) }}"
+    >
+        <button class="accept-button">
+            Accept
+        </button>
+    </form>
+
+    <form
+        method="POST"
+        action="{{ url_for('reject_project', project_id=project.id) }}"
+    >
+        <textarea
+            name="rejection_reason"
+            rows="3"
+            required
+            placeholder="Reason for rejection..."
+        ></textarea>
+
+        <button class="reject-button">
+            Reject
+        </button>
+    </form>
+
+    {% endif %}
+
+
+    {% if project.status == "Accepted" %}
+
+    <form
+        method="POST"
+        action="{{ url_for('complete_project', project_id=project.id) }}"
+    >
+        <button class="complete-button">
+            ✅ Complete
+        </button>
+    </form>
+
+    {% endif %}
+
+
+    {% if project.status in ["Completed", "Rejected", "Cancelled"] and not project.is_archived %}
+
+    <form
+        method="POST"
+        action="{{ url_for('archive_project', project_id=project.id) }}"
+    >
+        <button class="archive-button">
+            📦 Archive
+        </button>
+    </form>
+
+    {% endif %}
+
+
+    {% if project.is_archived %}
+
+    <form
+        method="POST"
+        action="{{ url_for('restore_project', project_id=project.id) }}"
+    >
+        <button class="restore-button">
+            ♻️ Restore
+        </button>
+    </form>
+
+    {% endif %}
+
+
+    <a
+        href="{{ url_for('project_workspace', project_id=project.id) }}"
+        class="view-button"
+    >
+        View Project
+    </a>
+
+</div>
+
+</div>

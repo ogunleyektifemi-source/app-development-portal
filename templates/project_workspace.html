@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Project Workspace
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        AppDev
+    </div>
+
+
+    <div class="nav-links">
+
+        {% if current_user.is_admin %}
+
+<a href="{{ url_for('admin_dashboard') }}">
+    Dashboard
+</a>
+
+{% else %}
+
+<a href="{{ url_for('customer_dashboard') }}">
+    Dashboard
+</a>
+
+{% endif %}
+
+        <a href="/">
+            Website
+        </a>
+        <div class="notification-container">
+
+    <button
+        id="notification-bell"
+        onclick="toggleNotifications()"
+    >
+
+        🔔
+
+        <span id="notification-count">
+            0
+        </span>
+
+    </button>
+
+
+    <div
+        id="notification-dropdown"
+        class="notification-dropdown"
+    >
+
+        <h3>
+            Notifications
+        </h3>
+
+        <div id="notification-list">
+
+            <p class="empty-notification">
+
+                No notifications.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+    </div>
+
+</nav>
+
+
+
+<section class="workspace-section">
+
+
+    <div class="workspace-container">
+
+
+        <!-- Project Information -->
+
+        <div class="project-header">
+
+            <div>
+
+                <p class="small-heading">
+                    PROJECT WORKSPACE
+                </p>
+
+
+                <h1>
+                    {{ project.project_type }}
+                </h1>
+        <p class="customer-name">
+
+            Customer:
+            {{ project.name }}
+
+        </p>
+        <form
+    method="POST"
+    action="{{ url_for(
+        'upload_file',
+        project_id=project.id
+    ) }}"
+    enctype="multipart/form-data"
+>
+
+    <input
+        type="file"
+        name="file"
+        required
+    >
+
+    <button
+        type="submit"
+        class="primary-button"
+    >
+
+        Upload File
+
+    </button>
+
+</form>
+<h2>
+    Files
+</h2>
+
+{% if files %}
+
+    {% for file in files %}
+
+    <div class="file-card">
+
+        <div>
+
+            <h3>
+
+                {% if file.file_type == "pdf" %}
+📄
+{% elif file.file_type in ["doc","docx"] %}
+📝
+{% elif file.file_type in ["png","jpg","jpeg"] %}
+🖼
+{% elif file.file_type == "zip" %}
+🗜
+{% else %}
+📁
+{% endif %}
+
+                {{ file.original_filename }}
+
+            </h3>
+
+            <p>
+
+                Uploaded by {{ file.uploaded_by }}
+
+            </p>
+
+            <p>
+
+                {% if file.file_size < 1024 %}
+
+{{ file.file_size }} B
+
+{% elif file.file_size < 1048576 %}
+
+{{ "%.1f"|format(file.file_size / 1024) }} KB
+
+{% else %}
+
+{{ "%.2f"|format(file.file_size / 1048576) }} MB
+
+{% endif %}
+
+            </p>
+
+            <small>
+
+                {{ file.uploaded_at.strftime("%d %b %Y %H:%M") }}
+
+            </small>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{{ url_for(
+                    'download_file',
+                    project_id=project.id,
+                    filename=file.filename
+                ) }}"
+                class="primary-button"
+            >
+
+                Download
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<p>
+
+    No files uploaded yet.
+
+</p>
+
+{% endif %}
+    </div>
+
+
+    <span class="status">
+
+        {{ project.status }}
+
+    </span>
+
+</div>
+
+
+{% if project.status == "Rejected" %}
+
+<div class="project-status-message rejected-status">
+
+    <h3>
+        Project Rejected
+    </h3>
+
+    <p>
+        This project has been rejected.
+    </p>
+
+
+    {% if project.rejection_reason %}
+
+    <p>
+
+        <strong>
+            Reason:
+        </strong>
+
+        {{ project.rejection_reason }}
+
+    </p>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+
+        <!-- Project Details -->
+
+        <div class="project-details">
+
+            <h2>
+                Project Details
+            </h2>
+
+
+            <p>
+
+                {{ project.project_description }}
+
+            </p>
+
+
+            {% if project.budget %}
+
+            <p>
+
+                <strong>
+                    Budget:
+                </strong>
+
+                {{ project.budget }}
+
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        
+        <!-- Conversation -->
+
+        <div class="conversation-container">
+
+
+            <h2>
+                Conversation
+            </h2>
+
+
+            <div class="chat-area"
+                id="chat-area">
+
+
+                {% if messages %}
+
+
+                    {% for message in messages %}
+
+
+                    <div
+    class="message
+    {% if (current_user.is_admin and message.sender == 'Admin')
+       or (not current_user.is_admin and message.sender == 'Customer') %}
+        my-message
+    {% else %}
+        other-message
+    {% endif %}"
+                    >
+
+                        <strong>
+
+                            {{ message.sender }}
+
+                        </strong>
+
+
+                        <p>
+
+                            {{ message.message_text | linkify }}
+
+                        </p>
+
+
+                        <small>
+
+                            {{ message.created_at.strftime(
+                                "%d %B %Y, %H:%M"
+                            ) }}
+
+                        </small>
+
+                    </div>
+
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                    <div class="empty-chat">
+
+                        <p>
+
+                            No messages yet.
+
+                            Start the conversation
+                            with your customer.
+
+                        </p>
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- Send Message -->
+
+            {% if current_user.is_admin or project.status == "Accepted" %}
+
+
+            <form
+    id="message-form"
+    method="POST"
+    action="{{ url_for('send_message', project_id=project.id) }}"
+    class="message-form"
+            >
+
+
+                <textarea
+                    id="message-box"
+                    name="message"
+                    placeholder="Type your message..."
+                    required
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+
+                    Send Message
+
+                </button>
+
+
+            </form>
+
+
+            {% else %}
+
+
+            <div class="closed-project">
+
+                <p>
+
+                    This project is no longer active.
+
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+
+        <!-- Project Actions -->
+
+        <div class="project-actions">
+
+{% if current_user.is_admin and project.status == "Accepted" %}
+
+<form
+    method="POST"
+    action="{{ url_for('complete_project', project_id=project.id) }}"
+    style="display:inline-block;"
+>
+    <button
+        type="submit"
+        class="complete-button"
+    >
+        ✅ Complete Project
+    </button>
+</form>
+
+<button
+    type="button"
+    class="reject-button"
+    onclick="showRejectConfirmation()"
+>
+    Reject Project
+</button>
+
+{% endif %}
+
+
+{% if not current_user.is_admin and project.status == "Accepted" %}
+
+<button
+    type="button"
+    class="cancel-button"
+    onclick="showCancelConfirmation()"
+>
+    Cancel Project
+</button>
+
+{% endif %}
+
+</div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- Reject Confirmation -->
+
+<div
+    id="rejectConfirmation"
+    class="confirmation-overlay"
+>
+
+
+    <div class="confirmation-box">
+
+
+        <h2>
+            Are You Sure?
+        </h2>
+
+
+        <p>
+
+            Are you sure you want to reject
+            this project?
+
+            This action will end the project.
+
+        </p>
+
+
+        <div class="confirmation-buttons">
+
+            <button
+    type="button"
+    onclick="closeRejectConfirmation()"
+    class="secondary-button"
+>
+
+                Go Back
+
+            </button>
+
+
+            <button
+                onclick="showRejectReason()"
+                class="reject-button"
+            >
+
+                Yes, Reject
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- Reject Reason -->
+
+<div
+    id="rejectReason"
+    class="confirmation-overlay"
+>
+
+    <div class="confirmation-box">
+
+        <h2>
+            Rejection Reason
+        </h2>
+
+        <p>
+            Please provide a reason for rejecting
+            this project. The customer will be able
+            to see this reason.
+        </p>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'reject_project',
+                project_id=project.id
+            ) }}"
+        >
+
+            <textarea
+                name="rejection_reason"
+                placeholder="Enter your reason..."
+                required
+            ></textarea>
+
+
+            <div class="confirmation-buttons">
+
+                <button
+                    type="button"
+                    onclick="closeRejectReason()"
+                    class="secondary-button"
+                >
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="reject-button"
+                >
+
+                    Confirm Rejection
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- Cancel Confirmation -->
+
+<div
+    id="cancelConfirmation"
+    class="confirmation-overlay"
+>
+
+
+    <div class="confirmation-box">
+
+
+        <h2>
+            Are You Sure?
+        </h2>
+
+
+        <p>
+
+            Are you sure you want to cancel
+            this project?
+
+            This will end the current project.
+
+        </p>
+
+
+        <div class="confirmation-buttons">
+
+
+            <button
+    type="button"
+    onclick="closeCancelConfirmation()"
+    class="secondary-button"
+>
+
+                Go Back
+
+            </button>
+
+
+            <form
+    method="POST"
+    action="{{ url_for('cancel_project', project_id=project.id) }}"
+>
+
+    <input
+        type="hidden"
+        name="cancellation_reason"
+        value="Cancelled by customer."
+    >
+
+    <button
+        type="submit"
+        class="cancel-button"
+    >
+        Yes, Cancel Project
+    </button>
+
+</form>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+function showRejectConfirmation() {
+
+    document.getElementById(
+        "rejectConfirmation"
+    ).style.display = "flex";
+
+}
+
+
+function closeRejectConfirmation() {
+
+    document.getElementById(
+        "rejectConfirmation"
+    ).style.display = "none";
+
+}
+
+
+function showRejectReason() {
+
+    document.getElementById(
+        "rejectConfirmation"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "rejectReason"
+    ).style.display = "flex";
+
+}
+
+
+function closeRejectReason() {
+
+    document.getElementById(
+        "rejectReason"
+    ).style.display = "none";
+
+}
+
+
+function showCancelConfirmation() {
+
+    document.getElementById(
+        "cancelConfirmation"
+    ).style.display = "flex";
+
+}
+
+
+function closeCancelConfirmation() {
+
+    document.getElementById(
+        "cancelConfirmation"
+    ).style.display = "none";
+
+}
+
+</script>
+
+<div
+    id="page-data"
+    data-admin="{{ current_user.is_admin | lower }}"
+    hidden>
+</div>
+
+<script>
+
+let lastMessageCount = 0;
+const isAdmin =
+    document
+        .getElementById("page-data")
+        .dataset.admin === "true";
+async function refreshMessages() {
+
+    const response = await fetch(
+        "/project/{{ project.id }}/messages"
+    );
+
+    if (!response.ok) return;
+
+    const messages = await response.json();
+
+    if (messages.length === lastMessageCount)
+        return;
+
+    lastMessageCount = messages.length;
+
+    const chatArea =
+        document.getElementById("chat-area");
+
+    let html = "";
+
+    messages.forEach(message => {
+
+        
+
+        const messageClass =
+            (isAdmin && message.sender === "Admin") ||
+            (!isAdmin && message.sender === "Customer")
+                ? "my-message"
+                : "other-message";
+
+        const linkedText =
+            message.text.replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+
+        html += `
+        <div class="message ${messageClass}">
+
+            <strong>${message.sender}</strong>
+
+            <p>${linkedText}</p>
+
+            <small>${message.time}</small>
+
+        </div>
+        `;
+
+    });
+
+    chatArea.innerHTML = html;
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+
+}
+
+refreshMessages();
+const form = document.getElementById("message-form");
+
+if (form) {
+
+    form.addEventListener("submit", async function(e) {
+
+        e.preventDefault();
+
+        const textarea =
+            document.getElementById("message-box");
+
+        const message =
+            textarea.value.trim();
+
+        if (!message) return;
+
+        await fetch(form.action, {
+
+            method: "POST",
+
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+
+            body: new FormData(form)
+
+        });
+
+        textarea.value = "";
+
+        setTimeout(refreshMessages, 100);
+        const chatArea = document.getElementById("chat-area");
+        chatArea.scrollTop = chatArea.scrollHeight;
+    });
+
+}
+setInterval(refreshMessages, 2000);
+async function refreshNotifications() {
+
+    const response = await fetch("/notifications");
+
+    const data = await response.json();
+
+    document.getElementById(
+        "notification-count"
+    ).textContent = data.count;
+
+    const list =
+        document.getElementById(
+            "notification-list"
+        );
+
+    list.innerHTML = "";
+
+    if (data.notifications.length === 0) {
+
+        list.innerHTML =
+            "<p class='empty-notification'>No notifications.</p>";
+
+        return;
+    }
+
+    data.notifications.forEach(notification => {
+
+    list.innerHTML += `
+<a
+    href="/notification/${notification.id}"
+    class="notification-item"
+    style="
+        display:block;
+        text-decoration:none;
+        color:black;
+        padding:15px;
+        border-bottom:1px solid #eee;
+    "
+>
+    ${notification.message}
+</a>
+`;
+
+});
+
+}
+
+function toggleNotifications() {
+
+    const dropdown =
+        document.getElementById(
+            "notification-dropdown"
+        );
+
+    if (
+        dropdown.style.display === "block"
+    ) {
+
+        dropdown.style.display = "none";
+
+    }
+
+    else {
+
+        dropdown.style.display = "block";
+
+    }
+    fetch(
+    "/notifications/read",
+    {
+        method:"POST"
+    }
+);
+
+refreshNotifications();
+
+}
+
+refreshNotifications();
+
+setInterval(
+    refreshNotifications,
+    2000
+);
+</script>
+
+</body>
+
+</html>

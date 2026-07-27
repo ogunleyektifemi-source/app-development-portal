@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        My Projects
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        AppDev
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="/">
+            Website
+        </a>
+
+        <a href="/request">
+            New Project
+        </a>
+
+        <a href="/logout">
+            Log Out
+        </a>
+        <div class="notification-container">
+
+    <button
+        id="notification-bell"
+        onclick="toggleNotifications()"
+    >
+
+        🔔
+
+        <span id="notification-count">
+            0
+        </span>
+
+    </button>
+
+
+    <div
+        id="notification-dropdown"
+        class="notification-dropdown"
+    >
+
+        <h3>
+            Notifications
+        </h3>
+
+        <div id="notification-list">
+
+            <p class="empty-notification">
+
+                No notifications.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</nav>
+
+
+<section class="dashboard-section">
+
+
+    <div class="dashboard-container">
+
+
+        <p class="small-heading">
+            CUSTOMER DASHBOARD
+        </p>
+
+
+        <h1>
+            Welcome, {{ current_user.name }}
+        </h1>
+
+
+        <p class="dashboard-intro">
+
+            Here you can view your project requests
+            and communicate with me.
+
+        </p>
+
+
+        <a
+            href="/request"
+            class="primary-button"
+        >
+
+            Start a New Project
+
+        </a>
+
+
+        <div class="customer-projects">
+
+
+            {% if projects %}
+
+
+                {% for project in projects %}
+
+
+                <div class="customer-project-card">
+
+
+                    <div>
+
+                        <h2>
+                            {{ project.project_type }}
+                        </h2>
+
+
+                        <p>
+
+                            {{ project.project_description }}
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="status">
+
+                        {{ project.status }}
+
+                    </span>
+
+
+                    {% if project.status == "Accepted" %}
+
+<a
+    href="{{ url_for(
+        'project_workspace',
+        project_id=project.id
+    ) }}"
+    class="view-button"
+>
+
+    Open Project
+
+</a>
+
+{% elif project.status == "Rejected" %}
+
+<div class="status-message">
+
+    <strong>
+        Reason:
+    </strong>
+
+    {{ project.rejection_reason }}
+
+</div>
+
+<a
+    href="{{ url_for(
+        'project_workspace',
+        project_id=project.id
+    ) }}"
+    class="view-button"
+>
+
+    View Project
+
+</a>
+
+{% elif project.status == "Cancelled" %}
+
+<div class="status-message">
+
+    <strong>
+        Cancelled:
+    </strong>
+
+    {{ project.cancellation_reason }}
+
+</div>
+
+<a
+    href="{{ url_for(
+        'project_workspace',
+        project_id=project.id
+    ) }}"
+    class="view-button"
+>
+
+    View Conversation
+
+</a>
+
+{% endif %}
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+            {% else %}
+
+
+                <div class="no-requests">
+
+                    <h2>
+                        No Projects Yet
+                    </h2>
+
+
+                    <p>
+
+                        You haven't submitted
+                        a project request yet.
+
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+<script>
+
+async function refreshNotifications() {
+
+    const response = await fetch("/notifications");
+
+    const data = await response.json();
+
+    document.getElementById("notification-count").textContent =
+        data.count;
+
+    const list =
+        document.getElementById("notification-list");
+
+    list.innerHTML = "";
+
+    if (data.notifications.length === 0) {
+
+        list.innerHTML =
+            "<p class='empty-notification'>No notifications.</p>";
+
+        return;
+
+    }
+
+    data.notifications.forEach(notification => {
+
+    list.innerHTML += `
+
+<a
+    href="/notification/${notification.id}"
+    class="notification-item"
+    style="
+        display:block;
+        text-decoration:none;
+        color:black;
+        padding:15px;
+        border-bottom:1px solid #eee;
+    "
+>
+
+    ${notification.message}
+
+</a>
+
+`;
+
+});
+
+}
+
+function toggleNotifications() {
+
+    const dropdown =
+        document.getElementById("notification-dropdown");
+
+    if (dropdown.style.display === "block") {
+
+        dropdown.style.display = "none";
+
+    } else {
+
+        dropdown.style.display = "block";
+
+    }
+
+}
+
+refreshNotifications();
+
+setInterval(
+    refreshNotifications,
+    2000
+);
+
+</script>
+</body>
+
+</html>

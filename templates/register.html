@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Create Account
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        AppDev
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="/login">
+            Login
+        </a>
+
+    </div>
+
+</nav>
+
+
+<section class="auth-section">
+
+
+    <div class="auth-container">
+
+
+        <p class="small-heading">
+            GET STARTED
+        </p>
+
+
+        <h1>
+            Create Your Account
+        </h1>
+
+
+        <p class="auth-intro">
+
+            Create an account to submit projects
+            and communicate with me.
+
+        </p>
+
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="flash-message">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form
+            method="POST"
+            class="auth-form"
+        >
+
+
+            <label>
+                Full Name
+            </label>
+
+
+            <input
+                type="text"
+                name="name"
+                required
+            >
+
+
+            <label>
+                Email Address
+            </label>
+
+
+            <input
+                type="email"
+                name="email"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+            >
+            <label style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+    <input
+        type="checkbox"
+        onclick="togglePassword('password')">
+    Show Password
+</label>
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+
+                Create Account
+
+            </button>
+
+
+        </form>
+
+
+        <p class="auth-footer">
+
+            Already have an account?
+
+            <a href="/login">
+                Log in
+            </a>
+
+        </p>
+
+
+    </div>
+
+
+</section>
+
+<script>
+function togglePassword(id) {
+
+    const password = document.getElementById(id);
+
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+</script>
+</body>
+
+</html>

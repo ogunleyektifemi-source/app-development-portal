@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        AppDev Admin
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">
+            View Website
+        </a>
+        <div class="notification-container">
+
+    <button
+        id="notification-bell"
+        onclick="toggleNotifications()"
+    >
+
+        🔔
+
+        <span id="notification-count">
+            0
+        </span>
+
+    </button>
+
+
+    <div
+        id="notification-dropdown"
+        class="notification-dropdown"
+    >
+
+        <h3>
+            Notifications
+        </h3>
+
+        <div id="notification-list">
+
+            <p class="empty-notification">
+
+                No notifications.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+    </div>
+
+</nav>
+
+
+
+<section class="admin-section">
+
+
+    <div class="admin-container">
+
+
+        <p class="small-heading">
+            MANAGEMENT PANEL
+        </p>
+
+
+        <h1>
+    📦 Archived Projects
+</h1>
+
+
+        <p class="admin-intro">
+
+            View and manage requests submitted
+            by potential customers.
+
+        </p>
+
+
+
+        {% if projects %}
+
+<div class="requests-container">
+
+{% for project in projects %}
+
+    {% include "includes/project_card.html" %}
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="no-requests">
+
+    <h2>No Active Projects</h2>
+
+    <p>
+        Active projects will appear here.
+    </p>
+
+</div>
+
+{% endif %}
+
+</section>
+
+<script>
+
+async function refreshNotifications() {
+
+    const response = await fetch("/notifications");
+    const data = await response.json();
+    console.log(data);
+    console.log(document.getElementById("notification-list").innerHTML);
+    document.getElementById("notification-count").textContent =
+        data.count;
+
+    const list = document.getElementById("notification-list");
+
+    list.innerHTML = "";
+
+    if (data.notifications.length === 0) {
+
+        list.innerHTML =
+            "<p class='empty-notification'>No notifications.</p>";
+
+        return;
+
+    }
+
+    data.notifications.forEach(notification => {
+
+        list.innerHTML += `
+<a
+    href="/notification/${notification.id}"
+    class="notification-item"
+    style="
+        display:block;
+        text-decoration:none;
+        color:black;
+        padding:15px;
+        border-bottom:1px solid #eee;
+    "
+>
+    ${notification.message}
+</a>
+`;
+
+    });
+
+}
+
+function toggleNotifications() {
+
+    const dropdown =
+        document.getElementById("notification-dropdown");
+
+    if (dropdown.style.display === "block") {
+
+        dropdown.style.display = "none";
+
+    } else {
+
+        dropdown.style.display = "block";
+
+        // DO NOT mark as read yet
+        // fetch("/notifications/read", {
+        //     method: "POST"
+        // });
+
+        // DO NOT refresh yet
+        // refreshNotifications();
+
+    }
+
+}
+
+// Start automatically
+refreshNotifications();
+
+// Refresh every 2 seconds
+setInterval(refreshNotifications, 2000);
+
+</script>
+</body>
+
+</html>
