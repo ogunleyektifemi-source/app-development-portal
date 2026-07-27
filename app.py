@@ -418,6 +418,9 @@ def project_request():
             print("=" * 60)
 
             raise
+        return render_template(
+        "request.html"
+    )
 
 # ==========================================
 # ADMIN DASHBOARD
