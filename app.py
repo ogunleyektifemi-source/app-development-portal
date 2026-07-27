@@ -357,91 +357,67 @@ def project_request():
 
     if request.method == "POST":
 
-        project_type = request.form[
-            "project_type"
-        ]
+        try:
 
-        project_description = request.form[
-            "project_description"
-        ]
+            project_type = request.form["project_type"]
 
-        budget = request.form.get(
-            "budget"
-        )
+            project_description = request.form["project_description"]
 
+            budget = request.form.get("budget")
 
-        new_request = ProjectRequest(
-
-            user_id=current_user.id,
-
-            name=current_user.name,
-
-            email=current_user.email,
-
-            project_type=project_type,
-
-            project_description=project_description,
-
-            budget=budget
-
-        )
-
-
-        db.session.add(
-            new_request
-        )
-
-        db.session.commit()
-        admin = User.query.filter_by(
-            is_admin=True
-        ).first()
-
-        send_email(
-
-    mail,
-    app,
-
-    "New Project Request",
-
-    admin.email,
-
-    f"""
-        A new project has been submitted.
-
-        Customer:
-        {current_user.name}
-
-        Project:
-        {project_type}
-
-        Description:
-
-        {project_description}
-        """
-
-        )
-        admin = User.query.filter_by(is_admin=True).first()
-
-        notification = Notification(
-    user_id=admin.id,
-    project_id=new_request.id,
-    message=f"{current_user.name} submitted a new '{project_type}' request."
-)
-
-        db.session.add(notification)
-        db.session.commit()
-
-        return redirect(
-            url_for(
-                "customer_dashboard"
+            new_request = ProjectRequest(
+                user_id=current_user.id,
+                name=current_user.name,
+                email=current_user.email,
+                project_type=project_type,
+                project_description=project_description,
+                budget=budget
             )
-        )
 
+            db.session.add(new_request)
+            db.session.commit()
 
-    return render_template(
-        "request.html"
-    )
-    db.session.commit()
+            admin = User.query.filter_by(is_admin=True).first()
+
+            send_email(
+                mail,
+                app,
+                "New Project Request",
+                admin.email,
+                f"""
+    A new project has been submitted.
+
+    Customer:
+    {current_user.name}
+
+    Project:
+    {project_type}
+
+    Description:
+
+    {project_description}
+    """
+            )
+
+            notification = Notification(
+                user_id=admin.id,
+                project_id=new_request.id,
+                message=f"{current_user.name} submitted a new '{project_type}' request."
+            )
+
+            db.session.add(notification)
+            db.session.commit()
+
+            return redirect(url_for("customer_dashboard"))
+
+        except Exception as e:
+
+            print("=" * 60)
+            print("PROJECT SUBMISSION ERROR")
+            print(e)
+            print("=" * 60)
+
+            raise
 
 # ==========================================
 # ADMIN DASHBOARD
