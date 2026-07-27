@@ -169,19 +169,21 @@ def register():
 
 
     if request.method == "POST":
+        try:
+            name = request.form[
+                "name"
+            ].strip()
 
-        name = request.form[
-            "name"
-        ].strip()
+            email = request.form[
+                "email"
+            ].strip().lower()
 
-        email = request.form[
-            "email"
-        ].strip().lower()
-
-        password = request.form[
-            "password"
-        ]
-
+            password = request.form[
+                "password"
+            ]
+        except Exception as e:
+            print("ERROR SUBMITTING PROJECT:", e)
+            raise
 
         existing_user = User.query.filter_by(
 
