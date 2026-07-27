@@ -9,7 +9,6 @@ from models import (
 )
 from flask import abort
 import uuid
-import notifications
 
 from flask import (
     Flask,
@@ -480,7 +479,9 @@ def admin_dashboard():
 
     return render_template(
     "admin_dashboard.html",
-    projects=active_projects
+    active_projects=active_projects,
+    completed_projects=completed_projects,
+    archived_projects=archived_projects
 )
 @app.route("/admin/completed")
 @login_required
