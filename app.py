@@ -72,6 +72,9 @@ from email_utils import send_email
 db.init_app(app)
 migrate = Migrate(app, db)
 
+with app.app_context():
+    db.create_all()
+
 def allowed_file(filename):
 
     return (
