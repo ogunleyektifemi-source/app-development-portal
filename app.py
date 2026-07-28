@@ -416,7 +416,7 @@ def project_request():
 
             print("=" * 60)
             print("PROJECT SUBMISSION ERROR")
-            print(e)
+            traceback.print_exc()
             print("=" * 60)
 
             raise
