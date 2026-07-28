@@ -51,7 +51,10 @@ from config import Config
 app = Flask(__name__)
 
 app.config.from_object(Config)
-
+print("=" * 60)
+print("DATABASE_URL ENV:", os.environ.get("DATABASE_URL"))
+print("SQLALCHEMY URI:", app.config["SQLALCHEMY_DATABASE_URI"])
+print("=" * 60)
 # ==========================================
 # EMAIL CONFIGURATION
 # ==========================================
