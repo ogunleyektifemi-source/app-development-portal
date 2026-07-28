@@ -9,7 +9,8 @@ from models import (
 )
 from flask import abort
 import uuid
-
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask import (
     Flask,
     render_template,
@@ -66,7 +67,7 @@ from email_utils import send_email
 
 
 db.init_app(app)
-
+migrate = Migrate(app, db)
 
 def allowed_file(filename):
 
@@ -115,12 +116,7 @@ def load_user(user_id):
 # CREATE DATABASE
 # ==========================================
 
-with app.app_context():
-    print("Creating database...")
-    print(app.config["SQLALCHEMY_DATABASE_URI"])
-    print(db.engine.url)
-    db.create_all()
-    print("Done")
+
 
 
 # ==========================================
@@ -1510,6 +1506,8 @@ def open_notification(notification_id):
         + "#chat-area"
 
     )
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
