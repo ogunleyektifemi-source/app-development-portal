@@ -381,25 +381,25 @@ def project_request():
 
             admin = User.query.filter_by(is_admin=True).first()
 
-            send_email(
-                mail,
-                app,
-                "New Project Request",
-                admin.email,
-                f"""
-    A new project has been submitted.
+    #         send_email(
+    #             mail,
+    #             app,
+    #             "New Project Request",
+    #             admin.email,
+    #             f"""
+    # A new project has been submitted.
 
-    Customer:
-    {current_user.name}
+    # Customer:
+    # {current_user.name}
 
-    Project:
-    {project_type}
+    # Project:
+    # {project_type}
 
-    Description:
+    # Description:
 
-    {project_description}
-    """
-            )
+    # {project_description}
+    # """
+    #         )
 
             notification = Notification(
                 user_id=admin.id,
@@ -541,33 +541,33 @@ def accept_project(project_id):
 
 
     db.session.commit()
-    send_email(
+#     send_email(
 
-    mail,
-    app,
+#     mail,
+#     app,
 
-    "Project Accepted",
+#     "Project Accepted",
 
-    project.email,
+#     project.email,
 
-    f"""
-Hello {project.name},
+#     f"""
+# Hello {project.name},
 
-Great news!
+# Great news!
 
-Your project:
+# Your project:
 
-{project.project_type}
+# {project.project_type}
 
-has been accepted.
+# has been accepted.
 
-Please log into your dashboard to begin chatting.
+# Please log into your dashboard to begin chatting.
 
-Regards,
+# Regards,
 
-Tifemi
-"""
-)
+# Tifemi
+# """
+# )
 
     return redirect(
         url_for("admin_dashboard")
