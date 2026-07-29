@@ -4,7 +4,6 @@ from models import (
     ProjectRequest,
     Message,
     Notification,
-    PasswordResetToken,
     ProjectFile
 )
 from flask import abort
@@ -1470,23 +1469,6 @@ def open_notification(notification_id):
 
     )
 
-
-@app.route("/fix-email")
-def fix_email():
-
-    user = User.query.filter_by(
-        email="ogunleyetifemi@gmail.com"
-    ).first()
-
-    if not user:
-        return "User not found."
-
-    user.email = "ogunleyektifemi@gmail.com"
-
-    db.session.commit()
-
-    return "Email updated!"
-
 from werkzeug.security import generate_password_hash
 
 @app.route("/admin/reset-password", methods=["GET", "POST"])
@@ -1517,6 +1499,61 @@ def admin_reset_password():
         return redirect(url_for("admin_reset_password"))
 
     return render_template("admin_reset_password.html")
+
+@app.route("/admin/delete-user", methods=["GET", "POST"])
+@login_required
+def admin_delete_user():
+
+    if not current_user.is_admin:
+        return "Access denied", 403
+
+    if request.method == "POST":
+
+        email = request.form["email"].strip().lower()
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash("User not found.")
+            return redirect(url_for("admin_delete_user"))
+
+        if user.is_admin:
+            flash("Admin accounts cannot be deleted.")
+            return redirect(url_for("admin_delete_user"))
+
+        projects = ProjectRequest.query.filter_by(
+            user_id=user.id
+        ).all()
+
+        for project in projects:
+
+            Message.query.filter_by(
+                project_id=project.id
+            ).delete()
+
+            Notification.query.filter_by(
+                project_id=project.id
+            ).delete()
+
+            ProjectFile.query.filter_by(
+                project_id=project.id
+            ).delete()
+
+            db.session.delete(project)
+
+        Notification.query.filter_by(
+            user_id=user.id
+        ).delete()
+
+        db.session.delete(user)
+
+        db.session.commit()
+
+        flash("User and all associated data deleted successfully.")
+
+        return redirect(url_for("admin_delete_user"))
+
+    return render_template("admin_delete_user.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

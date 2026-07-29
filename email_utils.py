@@ -24,8 +24,3 @@ def send_email(subject, recipient, body):
         json=payload,
         timeout=15,
     )
-
-    print("STATUS:", response.status_code)
-    print("BODY:", response.text)
-
-    response.raise_for_status()

@@ -118,12 +118,19 @@
                 id="password"
                 required
             >
-            <label style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+            <div class="show-password">
+
     <input
         type="checkbox"
-        onclick="togglePassword('password')">
-    Show Password
-</label>
+        id="show-password"
+        onclick="togglePassword('password')"
+    >
+
+    <label for="show-password">
+        Show Password
+    </label>
+
+</div>
 
 
             <button
@@ -165,11 +172,10 @@ function togglePassword(id) {
 
     const password = document.getElementById(id);
 
-    if (password.type === "password") {
-        password.type = "text";
-    } else {
-        password.type = "password";
-    }
+    password.type =
+        password.type === "password"
+        ? "text"
+        : "password";
 }
 </script>
 </body>

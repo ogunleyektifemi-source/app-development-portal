@@ -40,6 +40,7 @@ class User(UserMixin, db.Model):
         db.DateTime,
         nullable=True
     )
+    
 
 
 class ProjectRequest(db.Model):
