@@ -1112,17 +1112,20 @@ footer {
 }
 
 .file-card h3{
-
-    margin-bottom:8px;
-
+    margin-bottom: 8px;
+    color: #111827;
+}
+.file-card p{
+    margin: 4px 0;
+    color: #4b5563;
 }
 
-.file-card p{
+.file-card small{
+    color: #6b7280;
+}
 
-    margin:4px 0;
-
-    color:#666;
-
+.file-card a{
+    color: #2563eb;
 }
 .section-title{
 
@@ -1233,7 +1236,6 @@ footer {
     .file-card {
         flex-direction: column;
         align-items: flex-start;
-        color: black;
         gap: 10px;
     }
 
@@ -1242,7 +1244,6 @@ footer {
     .dashboard-links {
         display: flex;
         flex-wrap: wrap;
-        color: black;
         justify-content: center;
         gap: 10px;
     }
