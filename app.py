@@ -1568,6 +1568,14 @@ def admin_users():
         "admin_users.html",
         users=users
     )
+from flask import send_from_directory
 
+
+@app.route("/d9b21ac5-5a7e-4d61-b246-071b4bc02b3e.html")
+def trustpilot_verification():
+    return send_from_directory(
+        "static",
+        "d9b21ac5-5a7e-4d61-b246-071b4bc02b3e.html"
+    )
 if __name__ == "__main__":
     app.run(debug=True)
