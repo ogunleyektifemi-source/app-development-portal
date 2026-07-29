@@ -1504,26 +1504,24 @@ def open_notification(notification_id):
 @app.route("/test-email")
 def test_email():
 
-    from flask_mail import Message
-
     try:
-        msg = Message(
-            subject="SMTP Test",
-            sender=app.config["MAIL_USERNAME"],
-            recipients=[app.config["MAIL_USERNAME"]]
+
+        send_email(
+            mail,
+            app,
+            "Resend Test",
+            app.config["MAIL_USERNAME"],
+            "If you receive this email, Resend is working!"
         )
-
-        msg.body = "If you received this email, SMTP is working."
-
-        mail.send(msg)
 
         return "Email sent successfully."
 
     except Exception as e:
+
         import traceback
         traceback.print_exc()
-        return f"<pre>{e}</pre>", 500
 
+        return f"<pre>{e}</pre>", 500
     return "You are now an admin!"
 if __name__ == "__main__":
     app.run(debug=True)

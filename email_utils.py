@@ -25,5 +25,10 @@ def send_email(mail, app, subject, recipient, body):
         timeout=15,
     )
 
+    print("STATUS:", response.status_code)
+    print("BODY:", response.text)
+
+    response.raise_for_status()
+
     print(response.status_code)
     print(response.text)
