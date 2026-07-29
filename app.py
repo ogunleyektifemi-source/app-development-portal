@@ -1015,18 +1015,10 @@ def cancel_project(project_id):
 # FORGOT PASSWORD
 # ==========================================
 
-@app.route(
-    "/forgot-password",
-    methods=["GET", "POST"]
-)
+@app.route("/forgot-password", methods=["GET"])
 def forgot_password():
 
-    if request.method == "GET":
-
-        return render_template(
-            "forgot_password.html"
-        )
-
+    return render_template("forgot_password.html")
 
     email = request.form.get(
         "email",
@@ -1494,6 +1486,37 @@ def fix_email():
     db.session.commit()
 
     return "Email updated!"
-    
+
+from werkzeug.security import generate_password_hash
+
+@app.route("/admin/reset-password", methods=["GET", "POST"])
+@login_required
+def admin_reset_password():
+
+    if not current_user.is_admin:
+        return "Access denied", 403
+
+    if request.method == "POST":
+
+        email = request.form["email"].strip().lower()
+        new_password = request.form["password"]
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+
+            flash("User not found.")
+            return redirect(url_for("admin_reset_password"))
+
+        user.password_hash = generate_password_hash(new_password)
+
+        db.session.commit()
+
+        flash(f"Password updated for {user.email}")
+
+        return redirect(url_for("admin_reset_password"))
+
+    return render_template("admin_reset_password.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

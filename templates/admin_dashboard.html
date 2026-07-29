@@ -106,7 +106,12 @@
     >
         📦 Archive
     </a>
-
+    <a
+    href="{{ url_for('admin_reset_password') }}"
+    class="dashboard-link"
+>
+    🔑 Reset Password
+</a>
 </div>
         </h1>
 
@@ -226,6 +231,8 @@ refreshNotifications();
 setInterval(refreshNotifications, 2000);
 
 </script>
+
+
 </body>
 
 </html>
