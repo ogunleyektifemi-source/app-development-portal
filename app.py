@@ -1507,12 +1507,12 @@ def test_email():
     try:
 
         send_email(
-            mail,
-            app,
-            "Resend Test",
-            app.config["MAIL_USERNAME"],
-            "If you receive this email, Resend is working!"
-        )
+    mail,
+    app,
+    "Resend Test",
+    "ogunleyektifemi@gmail.com",
+    "If you receive this email, Resend is working!"
+)
 
         return "Email sent successfully."
 
@@ -1522,6 +1522,7 @@ def test_email():
         traceback.print_exc()
 
         return f"<pre>{e}</pre>", 500
-    return "You are now an admin!"
+
+    
 if __name__ == "__main__":
     app.run(debug=True)
