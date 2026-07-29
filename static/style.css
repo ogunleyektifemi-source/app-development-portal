@@ -1309,7 +1309,7 @@ footer {
 }
 .site-logo{
 
-    width:220px;
+    width:400px;
 
     max-width:80%;
 
@@ -1318,5 +1318,112 @@ footer {
     display:block;
 
     margin:0 auto 20px;
+
+}
+
+/* ---------- Scroll Animations ---------- */
+
+.reveal{
+
+    opacity:0;
+
+    transform:translateY(60px);
+
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+
+}
+
+.reveal.active{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+/* Slide Left */
+
+.slide-left{
+
+    opacity:0;
+
+    transform:translateX(-80px);
+
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+
+}
+
+.slide-left.active{
+
+    opacity:1;
+
+    transform:translateX(0);
+
+}
+
+/* Slide Right */
+
+.slide-right{
+
+    opacity:0;
+
+    transform:translateX(80px);
+
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+
+}
+
+.slide-right.active{
+
+    opacity:1;
+
+    transform:translateX(0);
+
+}
+
+/* Zoom */
+
+.zoom{
+
+    opacity:0;
+
+    transform:scale(.92);
+
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+
+}
+
+.zoom.active{
+
+    opacity:1;
+
+    transform:scale(1);
+
+}
+.primary-button,
+.secondary-button,
+.view-button{
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.view-button:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
 
 }

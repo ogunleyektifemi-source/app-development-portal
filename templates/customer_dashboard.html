@@ -89,7 +89,7 @@
 </nav>
 
 
-<section class="dashboard-section">
+<section class="dashboard-section reveal">
 
 
     <div class="dashboard-container">
@@ -132,7 +132,7 @@
                 {% for project in projects %}
 
 
-                <div class="customer-project-card">
+                <div class="customer-project-card reveal">
 
 
                     <div>
@@ -160,6 +160,7 @@
     <a
         href="https://www.trustpilot.com/review/app-development-portal.onrender.com"
         target="_blank"
+
         class="primary-button"
     >
         ⭐ Leave a Trustpilot Review
@@ -357,6 +358,7 @@ setInterval(
 );
 
 </script>
+<script src="{{ url_for('static', filename='animations.js') }}"></script>
 </body>
 
 </html>
