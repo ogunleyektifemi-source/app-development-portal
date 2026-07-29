@@ -382,8 +382,6 @@ def project_request():
             admin = User.query.filter_by(is_admin=True).first()
             try:
                 send_email(
-                    mail,
-                    app,
                     "New Project Request",
                     admin.email,
                     f"""
@@ -546,9 +544,6 @@ def accept_project(project_id):
     try:
         send_email(
 
-        mail,
-        app,
-
         "Project Accepted",
 
         project.email,
@@ -627,8 +622,6 @@ def reject_project(project_id):
     db.session.commit()
     try:
         send_email(
-        mail,
-        app,
 
             "Project Rejected",
 
@@ -835,8 +828,6 @@ def send_message(project_id):
             db.session.add(notification)
             try:
                 send_email(
-                    mail,
-                    app,
             "New Reply From Tifemi",
             project.email,
             f"""
