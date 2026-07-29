@@ -380,26 +380,28 @@ def project_request():
             db.session.commit()
 
             admin = User.query.filter_by(is_admin=True).first()
+            try:
+                send_email(
+                    mail,
+                    app,
+                    "New Project Request",
+                    admin.email,
+                    f"""
+        A new project has been submitted.
 
-    #         send_email(
-    #             mail,
-    #             app,
-    #             "New Project Request",
-    #             admin.email,
-    #             f"""
-    # A new project has been submitted.
+        Customer:
+        {current_user.name}
 
-    # Customer:
-    # {current_user.name}
+        Project:
+        {project_type}
 
-    # Project:
-    # {project_type}
+        Description:
 
-    # Description:
-
-    # {project_description}
-    # """
-    #         )
+        {project_description}
+        """
+                )
+            except:
+                pass
 
             notification = Notification(
                 user_id=admin.id,
@@ -541,34 +543,36 @@ def accept_project(project_id):
 
 
     db.session.commit()
-#     send_email(
+    try:
+        send_email(
 
-#     mail,
-#     app,
+        mail,
+        app,
 
-#     "Project Accepted",
+        "Project Accepted",
 
-#     project.email,
+        project.email,
 
-#     f"""
-# Hello {project.name},
+        f"""
+    Hello {project.name},
 
-# Great news!
+    Great news!
 
-# Your project:
+    Your project:
 
-# {project.project_type}
+    {project.project_type}
 
-# has been accepted.
+    has been accepted.
 
-# Please log into your dashboard to begin chatting.
+    Please log into your dashboard to begin chatting.
 
-# Regards,
+    Regards,
 
-# Tifemi
-# """
-# )
-
+    Tifemi
+    """
+    )
+    except:
+        pass
     return redirect(
         url_for("admin_dashboard")
     )
@@ -621,38 +625,41 @@ def reject_project(project_id):
     project.rejection_reason = rejection_reason
 
     db.session.commit()
-    send_email(
-mail,
-app,
+    try:
+        send_email(
+        mail,
+        app,
 
-    "Project Rejected",
+            "Project Rejected",
 
-    project.email,
+            project.email,
 
-    f"""
-Hello {project.name},
+            f"""
+        Hello {project.name},
 
-Unfortunately your project has been rejected.
+        Unfortunately your project has been rejected.
 
-Reason:
+        Reason:
 
-{rejection_reason}
+        {rejection_reason}
 
-Regards,
+        Regards,
 
-Tifemi
-"""
+        Tifemi
+        """
 
-)
-    flash("Project rejected successfully.")
+        )
 
-    return redirect(
-    url_for(
-        "project_workspace",
-        project_id=project.id
+        flash("Project rejected successfully.")
+
+        return redirect(
+        url_for(
+            "project_workspace",
+            project_id=project.id
+        )
     )
-)
-
+    except:
+        pass
 # ==========================================
 # PROJECT WORKSPACE
 # ==========================================
@@ -826,21 +833,23 @@ def send_message(project_id):
             )
 
             db.session.add(notification)
+            try:
+                send_email(
+                    mail,
+                    app,
+            "New Reply From Tifemi",
+            project.email,
+            f"""
+    Hello {project.name},
 
-            send_email(
-                mail,
-                app,
-        "New Reply From Tifemi",
-        project.email,
-        f"""
-Hello {project.name},
+    You have received a reply regarding your
+    '{project.project_type}' project.
 
-You have received a reply regarding your
-'{project.project_type}' project.
-
-Please log in to continue the conversation.
-"""
-    )
+    Please log in to continue the conversation.
+    """
+        )
+            except:
+                pass
 
         else:
 
@@ -855,19 +864,21 @@ Please log in to continue the conversation.
             )
 
             db.session.add(notification)
+            try:
+                send_email(
+                    mail,
+                    app,
+                    "New Customer Message",
+                    admin.email,
+                    f"""
+            {project.name} has sent you a message regarding
+            '{project.project_type}'.
 
-            send_email(
-                mail,
-                app,
-                "New Customer Message",
-                admin.email,
-                f"""
-        {project.name} has sent you a message regarding
-        '{project.project_type}'.
-
-        Please log in to reply.
-        """
-            )
+            Please log in to reply.
+            """
+                )
+            except:
+                pass
 
         db.session.commit()
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":

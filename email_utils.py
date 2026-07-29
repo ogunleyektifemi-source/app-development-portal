@@ -1,23 +1,19 @@
-from flask_mail import Message as MailMessage
+from threading import Thread
+from flask_mail import Message
 
-
-def send_email(mail, app, subject, recipient, body):
-
-    try:
-
-        msg = MailMessage(
+def _send(mail, app, subject, recipient, body):
+    with app.app_context():
+        msg = Message(
             subject=subject,
             sender=app.config["MAIL_USERNAME"],
             recipients=[recipient]
         )
-
         msg.body = body
-
         mail.send(msg)
 
-        print(f"Email sent to {recipient}")
-
-    except Exception as e:
-
-        print("EMAIL ERROR")
-        print(e)
+def send_email(mail, app, subject, recipient, body):
+    Thread(
+        target=_send,
+        args=(mail, app, subject, recipient, body),
+        daemon=True
+    ).start()

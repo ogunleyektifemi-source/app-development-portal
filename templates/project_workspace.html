@@ -850,21 +850,25 @@ if (form) {
 
         if (!message) return;
 
-        await fetch(form.action, {
+        const response = await fetch(form.action, {
+    method: "POST",
+    headers: {
+        "X-Requested-With": "XMLHttpRequest"
+    },
+    body: new FormData(form)
+});
 
-            method: "POST",
+console.log("Status:", response.status);
 
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            },
+if (!response.ok) {
+    const text = await response.text();
+    console.error(text);
+    alert("Message failed to send.");
+    return;
+}
 
-            body: new FormData(form)
-
-        });
-
-        textarea.value = "";
-
-        setTimeout(refreshMessages, 100);
+textarea.value = "";
+await refreshMessages();
         const chatArea = document.getElementById("chat-area");
         chatArea.scrollTop = chatArea.scrollHeight;
     });
