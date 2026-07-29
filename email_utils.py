@@ -29,6 +29,3 @@ def send_email(mail, app, subject, recipient, body):
     print("BODY:", response.text)
 
     response.raise_for_status()
-
-    print(response.status_code)
-    print(response.text)
