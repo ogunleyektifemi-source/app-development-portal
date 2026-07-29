@@ -1555,5 +1555,19 @@ def admin_delete_user():
 
     return render_template("admin_delete_user.html")
 
+@app.route("/admin/users")
+@login_required
+def admin_users():
+
+    if not current_user.is_admin:
+        return "Access denied", 403
+
+    users = User.query.order_by(User.name).all()
+
+    return render_template(
+        "admin_users.html",
+        users=users
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)

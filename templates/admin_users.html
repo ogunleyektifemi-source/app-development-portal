@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Registered Users</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Registered Users</h1>
+
+    <table style="width:100%; border-collapse:collapse;">
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Admin</th>
+        </tr>
+
+        {% for user in users %}
+
+        <tr>
+
+            <td>{{ user.id }}</td>
+
+            <td>{{ user.name }}</td>
+
+            <td>{{ user.email }}</td>
+
+            <td>
+
+                {% if user.is_admin %}
+                    ✅
+                {% else %}
+                    ❌
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+
+</html>
