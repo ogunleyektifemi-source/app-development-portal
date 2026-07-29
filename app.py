@@ -856,8 +856,6 @@ def send_message(project_id):
             db.session.add(notification)
             try:
                 send_email(
-                    mail,
-                    app,
                     "New Customer Message",
                     admin.email,
                     f"""
@@ -1100,8 +1098,6 @@ def forgot_password():
     try:
 
         send_email(
-            mail,
-            app,
             "Reset Your Password",
             user.email,
             f"""
@@ -1483,7 +1479,21 @@ def open_notification(notification_id):
     )
 
 
+@app.route("/fix-email")
+def fix_email():
 
+    user = User.query.filter_by(
+        email="ogunleyetifemi@gmail.com"
+    ).first()
+
+    if not user:
+        return "User not found."
+
+    user.email = "ogunleyektifemi@gmail.com"
+
+    db.session.commit()
+
+    return "Email updated!"
     
 if __name__ == "__main__":
     app.run(debug=True)
