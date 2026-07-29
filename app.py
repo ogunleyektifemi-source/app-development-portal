@@ -1194,20 +1194,6 @@ Tifemi
         )
 
     )
-@app.route("/test-email")
-def test_email():
-
-    msg = MailMessage(
-        subject="Test Email",
-        sender=app.config["MAIL_USERNAME"],
-        recipients=["YOUR_EMAIL@gmail.com"]
-    )
-
-    msg.body = "If you receive this, Flask-Mail works."
-    print("About to send email...")
-    mail.send(msg)
-    print("Email sent successfully!")
-    return "Email sent!"
 
 @app.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
