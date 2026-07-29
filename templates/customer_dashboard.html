@@ -147,6 +147,27 @@
                             {{ project.project_description }}
 
                         </p>
+                        {% if project.status == "Completed" %}
+
+<div class="trustpilot-box">
+
+    <h3>Enjoyed working with OSL App Dev?</h3>
+
+    <p>
+        We'd really appreciate your feedback.
+    </p>
+
+    <a
+        href="https://www.trustpilot.com/review/app-development-portal.onrender.com"
+        target="_blank"
+        class="primary-button"
+    >
+        ⭐ Leave a Trustpilot Review
+    </a>
+
+</div>
+
+{% endif %}
 
                     </div>
 
