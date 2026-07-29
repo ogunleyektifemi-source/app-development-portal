@@ -23,8 +23,7 @@ from flask import send_from_directory
 import traceback
 import os
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message as MailMessage
-
+from flask_mail import Mail
 from datetime import datetime, timedelta
 import secrets
 
@@ -1098,58 +1097,40 @@ def forgot_password():
     )
 
 
-    # Create email
-
-    email_message = MailMessage(
-
-        subject="Reset Your Password",
-
-        sender=app.config["MAIL_USERNAME"],
-
-        recipients=[user.email]
-
-    )
-
-
-    email_message.body = f"""
-Hello {user.name},
-
-We received a request to reset the password
-for your account.
-
-Please click the link below to create a new password:
-
-{reset_link}
-
-This password reset link will expire in 1 hour.
-
-If you did not request this password reset,
-you can safely ignore this email.
-
-Regards,
-
-Tifemi
-"""
-
-
     try:
 
-        mail.send(
-            email_message
+        send_email(
+            mail,
+            app,
+            "Reset Your Password",
+            user.email,
+            f"""
+    Hello {user.name},
+
+    We received a request to reset the password
+    for your account.
+
+    Please click the link below to create a new password:
+
+    {reset_link}
+
+    This password reset link will expire in 1 hour.
+
+    If you did not request this password reset,
+    you can safely ignore this email.
+
+    Regards,
+
+    Tifemi
+    """
         )
 
-
-        print(
-            "PASSWORD RESET EMAIL SENT TO:",
-            user.email
-        )
-
+        print("PASSWORD RESET EMAIL SENT TO:", user.email)
 
         flash(
             "If an account exists with that email, "
             "a password reset link has been sent."
         )
-
 
     except Exception as error:
 
@@ -1501,27 +1482,7 @@ def open_notification(notification_id):
 
     )
 
-@app.route("/test-email")
-def test_email():
 
-    try:
-
-        send_email(
-    mail,
-    app,
-    "Resend Test",
-    "ogunleyektifemi@gmail.com",
-    "If you receive this email, Resend is working!"
-)
-
-        return "Email sent successfully."
-
-    except Exception as e:
-
-        import traceback
-        traceback.print_exc()
-
-        return f"<pre>{e}</pre>", 500
 
     
 if __name__ == "__main__":

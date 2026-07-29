@@ -2,7 +2,7 @@ import os
 import requests
 
 
-def send_email(mail, app, subject, recipient, body):
+def send_email(subject, recipient, body):
 
     api_key = os.environ.get("RESEND_API_KEY")
 
