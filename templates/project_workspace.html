@@ -131,10 +131,11 @@
 >
 
     <input
-        type="file"
-        name="file"
-        required
-    >
+    type="file"
+    name="file"
+    accept=".pdf,.doc,.docx,.txt,.rtf,.csv,.md,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.webp,.svg,.fig,.xd,.psd,.ai,.zip,.rar,.7z,.py,.js,.ts,.html,.css,.json,.xml,.sql,.mp4,.mov,.avi,.webm,.mp3,.wav,.ogg"
+    required
+>
 
     <button
         type="submit"
@@ -162,12 +163,34 @@
 
                 {% if file.file_type == "pdf" %}
 📄
+
 {% elif file.file_type in ["doc","docx"] %}
 📝
-{% elif file.file_type in ["png","jpg","jpeg"] %}
-🖼
-{% elif file.file_type == "zip" %}
-🗜
+
+{% elif file.file_type in ["xls","xlsx","csv"] %}
+📊
+
+{% elif file.file_type in ["ppt","pptx"] %}
+📈
+
+{% elif file.file_type in ["png","jpg","jpeg","gif","webp","svg"] %}
+🖼️
+
+{% elif file.file_type in ["zip","rar","7z"] %}
+🗜️
+
+{% elif file.file_type in ["py","js","ts","html","css","json","xml","sql"] %}
+💻
+
+{% elif file.file_type in ["fig","xd","psd","ai"] %}
+🎨
+
+{% elif file.file_type in ["mp4","mov","avi","webm"] %}
+🎥
+
+{% elif file.file_type in ["mp3","wav","ogg"] %}
+🎵
+
 {% else %}
 📁
 {% endif %}
