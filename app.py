@@ -1319,52 +1319,42 @@ def download_file(project_id, filename):
         filename,
         as_attachment=True
     )
-@app.route("/notifications")
+@app.route("/notification/<int:notification_id>")
 @login_required
-def get_notifications():
+def open_notification(notification_id):
 
-    notifications = Notification.query.filter_by(
-        user_id=current_user.id,
-        is_read=False
-    ).order_by(
-        Notification.created_at.desc()
-    ).all()
-    print("\n========== NOTIFICATIONS ==========")
-    print("Current User:", current_user.id)
+    notification = Notification.query.get_or_404(notification_id)
 
-    notifications = Notification.query.filter_by(
-        user_id=current_user.id,
-        is_read=False
-    ).order_by(
-        Notification.created_at.desc()
-    ).all()
+    if notification.user_id != current_user.id:
+        return "Access denied", 403
 
-    print("Found:", len(notifications))
+    notification.is_read = True
+    db.session.commit()
 
-    for n in notifications:
-        print(
-            n.id,
-            n.user_id,
-            n.project_id,
-            n.message
-        )
-    return jsonify({
+    message = notification.message.lower()
 
-        "count": len(notifications),
+    if "uploaded" in message:
+        anchor = "#files"
 
-        "notifications": [
+    elif "message" in message or "replied" in message:
+        anchor = "#chat-area"
 
-            {
-                "id": notification.id,
-                "message": notification.message,
-                "project_id": notification.project_id
-            }
+    elif (
+        "submitted" in message
+        or "request" in message
+        or "application" in message
+    ):
+        anchor = "#project-actions"
 
-            for notification in notifications
+    else:
+        anchor = ""
 
-        ]
-
-    })
+    return redirect(
+        url_for(
+            "project_workspace",
+            project_id=notification.project_id
+        ) + anchor
+    )
     
 
 
@@ -1442,32 +1432,6 @@ def restore_project(project_id):
     flash("Project restored.")
 
     return redirect(url_for("admin_dashboard"))
-
-@app.route("/notification/<int:notification_id>")
-@login_required
-def open_notification(notification_id):
-
-    notification = Notification.query.get_or_404(
-        notification_id
-    )
-
-    if notification.user_id != current_user.id:
-        return "Access denied", 403
-
-    notification.is_read = True
-
-    db.session.commit()
-
-    return redirect(
-
-        url_for(
-            "project_workspace",
-            project_id=notification.project_id
-        )
-
-        + "#chat-area"
-
-    )
 
 from werkzeug.security import generate_password_hash
 

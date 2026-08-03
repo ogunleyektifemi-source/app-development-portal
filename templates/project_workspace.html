@@ -147,7 +147,7 @@
     </button>
 
 </form>
-<h2>
+<h2 id="files">
     Files
 </h2>
 
@@ -423,7 +423,7 @@
 
 
             <!-- Send Message -->
-
+            
             {% if current_user.is_admin or project.status == "Accepted" %}
 
 
@@ -479,8 +479,33 @@
 
         <!-- Project Actions -->
 
-        <div class="project-actions">
+        <div id="project-actions" class="project-actions">
+            {% if current_user.is_admin and project.status == "New" %}
 
+<form
+    method="POST"
+    action="{{ url_for('accept_project', project_id=project.id) }}"
+    style="display:inline-block;"
+>
+
+    <button
+        type="submit"
+        class="accept-button"
+    >
+        ✅ Accept Project
+    </button>
+
+</form>
+
+<button
+    type="button"
+    class="reject-button"
+    onclick="showRejectConfirmation()"
+>
+    ❌ Reject Project
+</button>
+
+{% endif %}
 {% if current_user.is_admin and project.status == "Accepted" %}
 
 <form
