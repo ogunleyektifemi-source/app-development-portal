@@ -1357,6 +1357,31 @@ def open_notification(notification_id):
     )
     
 
+@app.route("/notifications")
+@login_required
+def notifications():
+
+    notifications = (
+        Notification.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Notification.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    return jsonify({
+        "count": sum(not n.is_read for n in notifications),
+        "notifications": [
+            {
+                "id": n.id,
+                "message": n.message,
+                "is_read": n.is_read
+            }
+            for n in notifications
+        ]
+    })
+
+
 
 @app.route("/notifications/read", methods=["POST"])
 @login_required
